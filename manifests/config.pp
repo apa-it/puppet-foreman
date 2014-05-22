@@ -1,19 +1,21 @@
 # Configure foreman
 class foreman::config {
-  concat_build {'foreman_settings':
-    order => ['*.yaml'],
-  }
-
-  concat_fragment {'foreman_settings+01-header.yaml':
-    content => template('foreman/settings.yaml.erb'),
-  }
-
-  file {'/etc/foreman/settings.yaml':
-    source  => concat_output('foreman_settings'),
-    require => Concat_build['foreman_settings'],
+  
+  concat {'/etc/foreman/settings.yaml':
     owner   => 'root',
     group   => $foreman::group,
     mode    => '0640',
+    notify  => Class['foreman::service'],
+  }
+
+  concat::fragment {'foreman_settings+01-header.yaml':
+    target => '/etc/foreman/settings.yaml',
+	order => 01,
+	content => template('foreman/settings.yaml.erb'),
+  }
+
+    source  => concat_output('foreman_settings'),
+    require => Concat_build['foreman_settings'],
   }
 
   file { '/etc/foreman/database.yml':

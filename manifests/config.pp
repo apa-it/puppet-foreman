@@ -14,10 +14,6 @@ class foreman::config {
 	content => template('foreman/settings.yaml.erb'),
   }
 
-    source  => concat_output('foreman_settings'),
-    require => Concat_build['foreman_settings'],
-  }
-
   file { '/etc/foreman/database.yml':
     owner   => 'root',
     group   => $foreman::group,
